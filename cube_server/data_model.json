@@ -1,0 +1,53 @@
+{
+    "name": "coin_markets",
+    "label": "Crypto Currency Coin Market Data",
+    "description": "",
+    "cubes":[
+            {"name":"coin_market_cube", 
+                "dimensions": ["date", "coin", "price", "volume"], 
+                "measures": [
+                    
+                    ],
+                "aggregates":[
+                    {"name":"record_count","function":"count","label":"Record Count"}
+                    ]
+                    ,"joins":
+
+                    [
+                        {"master":"coin_id","detail":"dim_coin.coin_id"},                      
+                        {"master":"exchange_id","detail":"dim_exchanbe.exchange_id"},
+                        {"master":"encounter_date_id","detail":"dim_date.date_id"}
+                        
+                    ]
+            }
+            ]
+        ,
+    "dimensions":[
+        {"name":"date", "label":"Date of this encounter", 
+            "levels": [
+                {"name":"year", "attributes":["year"]},
+                {"name":"qtr", "attributes":["qtr"]},
+                {"name":"month", "attributes":["month"]},
+                {"name":"week_number", "attributes":["week_number"]},
+                {"name":"day", "attributes":["day"]},
+                {"name":"hour", "attributes":["hour"]},
+                {"name":"hr_qtr", "attributes":["hr_qtr"]}
+            ],
+            "hierarchies":[
+                {"name":"ymd","levels":["year","month","day"]},
+                {"name":"yw","levels":["year","week_number"]},
+                {"name":"yqmd","levels":["year","qtr","month","day"]},
+                {"name":"yqmwd","levels":["year","qtr","month","week_number","day"]}]
+        }
+        
+        ],
+    "measures": [
+        {"name":"price", "label":"", "aggregates":["sum","std","avg"]}, 
+        {"name":"volume", "label":"", "aggregates":["sum","std","avg"]}
+        ],
+    "aggregates":[
+         {"name": "record_count","function": "count"}
+        
+    ]
+
+}

@@ -1,0 +1,3 @@
+[
+    {"name":"poloniex","downloader_name":"PoloniexDownloader", "api_url":"https://poloniex.com/public?command=returnChartData", "url":"http://wwww.poloniex.com"}
+]

@@ -1,0 +1,58 @@
+version: '2'
+services:
+  nginx-proxy:
+    image: jwilder/nginx-proxy
+    container_name: nginx-proxy
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - "/var/run/docker.sock:/tmp/docker.sock:ro"
+      - "/etc/nginx/vhost.d"
+      - "/usr/share/nginx/html"
+    labels: 
+      com.github.jrcs.letsencrypt_nginx_proxy_companion.nginx_proxy: "true"
+  mariadb:
+    image: mariadb:10.1
+    container_name: mariadb
+    environment:
+      - MYSQL_ROOT_PASSWORD=cryptoquant
+      - MYSQL_DATABASE=quant
+      - MYSQL_USER=quantservice
+      - MYSQL_PASSWORD=cryptoquant
+      - VIRTUAL_HOST=mariadb.cryptoquant.org
+    ports:
+     - "3306:3306"
+    volumes:
+     - "/data/cryptoquant/mariadb:/var/lib/mysql"
+  cubes:
+    build: ./cube_server
+    image: cubes
+    container_name: cubes
+    environment:
+      - VIRTUAL_HOST=cube.cryptoquant.org
+      - VIRTUAL_PORT=5000
+      - JUPYTER_ENDPOINT=false
+      - CONNECTION_STRING=mysql+pymysql://root:cryptoquant@mariadb/quant
+    volumes:
+      - "./cube_server:/srv"
+    links:
+      - mariadb
+  ipynb_cubes:
+    build: ./cube_server
+    image: ipynb/cubes
+    depends_on: 
+      - cubes
+    container_name: ipynb_cubes
+    environment:
+      - VIRTUAL_HOST=ipynbcube.cryptoquant.org
+      - VIRTUAL_PORT=80
+      - IPYTHONDIR=/srv
+      - JUPYTER_ENDPOINT=true
+      - CONNECTION_STRING=mysql+pymysql://root:cryptoquant@mariadb/quant
+    volumes:
+      - "./cube_server:/srv"
+    links:
+      - mariadb
+      - cubes
+  
