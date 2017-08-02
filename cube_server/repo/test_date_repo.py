@@ -26,6 +26,7 @@ class TestDateRepo(unittest.TestCase):
     db_path = None
     def setUp(self):
         connection = self.CONNECTION % (self.mariadb_virtual_host, self.mysql_database)
+        print "Connection %s" % (connection)
         try:
             # Verify the required database exists before running any tests
             self.d_base = create_engine(connection.replace(self.mysql_database, ""))

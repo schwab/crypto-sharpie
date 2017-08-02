@@ -1,10 +1,11 @@
 import urllib2
+import requests
 import json
 import urllib
 import time
 import hmac,hashlib
-from downloader import Downloader
-class PoloniexDownloader(Downloader):
+#from downloader import Downloader
+class PoloniexDownloader(object):
     """
     download data from poloniex
     """
@@ -18,21 +19,25 @@ class PoloniexDownloader(Downloader):
         return data
     def get_order_book(self, pair):
         url = self.temp_order_book %(pair)
-        headers = {"Cookie":"__cfduid=db963a7afb9f6bfc31596b19472f0132b1501500971; _ga=GA1.2.1051462959.1501500971; _gid=GA1.2.362563049.1501500971; POLOSESSID=eb2bmt0ivdm0s042c2u36dl6u5",
+        print "URL get_order_book : %s" % (url)
+        headers = {"cache-control":"no-cache",
         "User-Agent":"Mozilla/5.0 (Windows NT 6.1; Win64; x64)",
-        "Accept-Encoding":"gzip, deflate, br"
+        "Accept-Encoding":"application/json"
 
         }
-        response = urllib2.urlopen(url)
-
+        req = urllib2.Request(url, headers=headers)
+        response = urllib2.urlopen(req)
+        #print response
         data = response.read()
+
+        print "data %s" % (data)
         return json.dumps(data)
 
  
 def createTimeStamp(datestr, format="%Y-%m-%d %H:%M:%S"):
     return time.mktime(time.strptime(datestr, format))
  
-class poloniex:
+class poloniex(object):
     def __init__(self, APIKey, Secret):
         self.APIKey = APIKey
         self.Secret = Secret
