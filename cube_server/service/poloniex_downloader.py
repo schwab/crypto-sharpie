@@ -23,15 +23,12 @@ class PoloniexDownloader(object):
         headers = {"cache-control":"no-cache",
         "User-Agent":"Mozilla/5.0 (Windows NT 6.1; Win64; x64)",
         "Accept-Encoding":"application/json"
-
         }
         req = urllib2.Request(url, headers=headers)
         response = urllib2.urlopen(req)
         #print response
         data = response.read()
-
-        print "data %s" % (data)
-        return json.dumps(data)
+        return json.loads(data)
 
  
 def createTimeStamp(datestr, format="%Y-%m-%d %H:%M:%S"):

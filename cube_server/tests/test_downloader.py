@@ -5,7 +5,8 @@ __author__ = 'mcstar'
 import time
 import unittest
 from datetime import datetime
-from service.poloniex_downloader import PoloniexDownloader, poloniex
+from cube_server.service.poloniex_downloader import PoloniexDownloader, poloniex
+
 
 class TestDownloader(unittest.TestCase):
     """
@@ -19,15 +20,25 @@ class TestDownloader(unittest.TestCase):
         """
         pdown = PoloniexDownloader()
         result = pdown.get_order_book("BTC_ETH")
-        print "result type: %s value: %s" % (type(result),result)
-        self.assertTrue(isinstance(result, object))
+        #print "result type: %s value: %s" % (type(result),result)
+        self.assertTrue("asks" in result)
+        self.assertTrue("bids" in result)
+        self.assertTrue(isinstance(result, dict))
+        self.assertTrue(len(result["asks"]) > 0)
+        self.assertTrue(len(result["bids"]) > 0)
     def test_daily_data(self):
         """
         Verify daily data pull
         """
         start = datetime(2016, 1, 1)
+        end = datetime(2016, 2, 1)
         unix_start = time.mktime(start.timetuple())
+        unix_end = time.mktime(end.timetuple())
+
+        print "test_daily_data start %s : %s, end %s : %s" % (start, unix_start, end, unix_end)
+        
         self.assertTrue(unix_start > 0)
+
 #
     #def test_poloniex_lib_ticker(self):
     #    """
