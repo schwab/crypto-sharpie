@@ -22,4 +22,11 @@ class TestDownloader(unittest.TestCase):
         result = cdi.generate_days_in_range(dt_start, dt_end)
         print "dates in result : %s" % (len(result))
         self.assertTrue(len(result) == 31)
+    
+    def test_missing_dates(self):
+        cdi = CoinDataImporter(self.config_provider.data["connection"])
+        dt_range = cdi.create_missing_dates(datetime(2015,1,1), \
+            datetime(2016,1,1))
+        self.assertTrue(len(dt_range) > 250)
+        print "%s dates exist" % (len(dt_range))
         

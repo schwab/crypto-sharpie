@@ -18,7 +18,8 @@ if [ "$JUPYTER_ENDPOINT" == "false" ]; then
         echo "Loading clean data"
         ./repo/coin_data_importer.py -c $CONNECTION_STRING 
     fi 
-   
+    echo 'starting slicer server using slicer.ini'
+    slicer serve slicer.ini
 
 else
     echo "starting jupyter notebook for mariadb"

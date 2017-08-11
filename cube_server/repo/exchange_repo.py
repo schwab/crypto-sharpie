@@ -2,6 +2,7 @@ import os
 from sqlalchemy import *
 from sqlalchemy.orm import sessionmaker
 from coin_data_models import DimExchange
+from coin_data_models import *
 from sqlalchemy import create_engine
 
 class ExchangeRepo(object):

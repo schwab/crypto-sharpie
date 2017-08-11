@@ -1,4 +1,5 @@
 import os
+import time
 from sqlalchemy import *
 from sqlalchemy.orm import sessionmaker
 from coin_data_models import DimDate
@@ -27,7 +28,7 @@ class DateRepo(object):
             insert_date = DimDate(year=date.year, month=date.month,\
                 day=date.day, qtr=self.get_qtr(date), week_number= \
                 date.isocalendar()[1], weekday=date.weekday(), \
-                month_name=date.strftime("%B"))
+                month_name=date.strftime("%B"), date_id=time.mktime(date.timetuple()))
             self.active_session.add(insert_date)
             self.active_session.commit()
             return insert_date
@@ -41,6 +42,12 @@ class DateRepo(object):
             return query.first()
         else:
             return None
+
+    def get_by_ut(self, date_ut):
+        query = self.active_session.query(DimDate).filter(\
+        DimDate.date_id == date_ut)
+        return query.first()
+
     def delete(self, date):
         """
         Delete the date entry from the table
@@ -48,7 +55,10 @@ class DateRepo(object):
         item = self.active_session.query(DimDate).filter_by(\
         year=date.year, month=date.month, day=date.day).first()
         self.active_session.delete(item)
-
+    def get_between(self, start_ut, end_ut):
+        items = self.active_session.query(DimDate).filter(\
+            and_(DimDate.date_id <= start_ut, DimDate.date_id >= end_ut))
+        return items.all()
 
     def get_qtr(self, date):
         if date.month in [1, 2, 3]: return 1

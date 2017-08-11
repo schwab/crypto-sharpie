@@ -15,6 +15,7 @@ from coin_data_models import DimDate as date
 from coin_data_models import DimExchange as Exchange
 from coin_data_models import DimCoin as coin 
 from coin_data_models import FactCoinExchangePrice as fact_coin
+from coin_data_models import drop_recreate_db
 from date_repo import DateRepo
 from exchange_repo import ExchangeRepo
 from sqlalchemy import *
@@ -24,11 +25,14 @@ from sqlalchemy.ext.declarative import declarative_base
 class CoinDataImporter(object):
     '''
     '''
-    exchange_file_name = "./data/exchange.json"
-    def __init__(self, connection):
+    exchange_file_name = None
+    connection = None
+
+    def __init__(self, connection, data_dir="./data"):
         '''
         Object init
         '''
+        self.exchange_file_name = "%s/exchange.json" % (data_dir)
         self.connection = connection
         self.dt_repo = DateRepo(connection=self.connection)
         # Create tables
@@ -41,13 +45,14 @@ class CoinDataImporter(object):
         """
         import exchange data
         """
-        erepo = ExchangeRepo(self.connection)
+        erepo = ExchangeRepo(connection=self.connection)
         print ("importing exchanges from %s" % (self.exchange_file_name), file=sys.stderr)
         with open(self.exchange_file_name, 'r') as file:
             data = json.load(file)
             for item in data:
                 data_item = erepo.add_get(Exchange(exchange_nm=item["name"], exchange_url=item["url"],exchange_api_url=item["api_url"]))
                 print ("Inserted or found %s" % (data_item), file=sys.stderr)
+    
     def import_dates_daily(self):
         date_start = datetime(2015, 1,1)
         date_ptr = date_start
@@ -79,8 +84,20 @@ class CoinDataImporter(object):
         '''
         Until we get a system in place where we import deltas, clean out the existing data
         '''
-        #models.
+        drop_recreate_db(self.connection)
     
+    def create_missing_dates(self, start, end):
+        """
+        Create all dates missing from the datable
+        """
+        dt_range = self.generate_days_in_range(start, \
+            end)
+        range_items = []
+        for dt in dt_range:
+            range_items.append(self.dt_repo.add_get(datetime.fromtimestamp(dt)))
+        
+        return range_items
+        
 def main(connection, init):
     '''
     Main method for running from command line

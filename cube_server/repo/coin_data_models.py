@@ -38,7 +38,7 @@ class DimDate(Base):
     """
     __tablename__ = "dim_date"
     __table_args__ = (UniqueConstraint("year", "month", "day","hour", name='_ymd_constraint'),)
-    date_id = Column(Integer, primary_key=True, autoincrement=True)
+    date_id = Column(Integer, primary_key=True)
     year = Column(Integer, index=True)
     month = Column(Integer, index=True)
     day = Column(Integer, index=True)
@@ -88,6 +88,27 @@ class FactCoinExchangePrice(Base):
     price_open = Column(Numeric)
     price_close = Column(Numeric)
 
+
+def create_db(connection):
+    STATEMENT = "create database IF NOT EXISTS quant;"
+    init_conn = connection.replace("/quant", "")
+    print "%s using connection %s" % (STATEMENT, init_conn)
+    engine = create_engine(init_conn)
+    c = engine.connect()
+    c.execute(STATEMENT)
+    c.close()
+    print "%s Complete" % (STATEMENT ) 
+
+def drop_recreate_db(connection):
+    create_db(connection)
+    print "Dropping schema ..."
+    engine = create_engine(connection)
+    Base.metadata.drop_all(engine)
+    print "Recreate schema ..."
+    Base.metadata.create_all(engine)
+ENGINE = None
+def connect(connection):
+    ENGINE = create_engine(connection)
 if __name__ == "__main__":
     PARSER = argparse.ArgumentParser("Crypto_sharpie fact and dimension models.")
     PARSER.add_argument("-d", "--drop", dest="drop", \

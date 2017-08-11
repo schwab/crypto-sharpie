@@ -26,6 +26,7 @@ class TestDownloader(unittest.TestCase):
         self.assertTrue(isinstance(result, dict))
         self.assertTrue(len(result["asks"]) > 0)
         self.assertTrue(len(result["bids"]) > 0)
+    
     def test_daily_data(self):
         """
         Verify daily data pull
@@ -38,6 +39,8 @@ class TestDownloader(unittest.TestCase):
         print "test_daily_data start %s : %s, end %s : %s" % (start, unix_start, end, unix_end)
         
         self.assertTrue(unix_start > 0)
+        self.assertGreater(unix_end, unix_start)
+        
 
 #
     #def test_poloniex_lib_ticker(self):
