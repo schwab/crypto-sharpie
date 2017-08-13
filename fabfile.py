@@ -37,6 +37,13 @@ def init():
         if not os.path.isdir(f):
             print "Creating directory %s/%s" % (os.getcwd(), f)
             local("mkdir %s/%s" % (os.getcwd(), f))
+@task
+def restart(names):
+    services = split_comma(names)
+    commands = []
+    for service in services:
+        commands.append("docker-compose restart %s" % (service))
+    run_commands(commands)    
 def run_commands(commands, warn_only=False):
     """
     Run one or more commands based on the current env.name (dev is local, otherwise remote)
@@ -57,6 +64,8 @@ def run_commands(commands, warn_only=False):
                     run(c)
             else:
                 run(c) 
+def split_comma(names=""):
+    return names.split(',')
 
 @task(alias="s")
 def stats():

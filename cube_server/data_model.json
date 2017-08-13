@@ -38,6 +38,20 @@
                 {"name":"yw","levels":["year","week_number"]},
                 {"name":"yqmd","levels":["year","qtr","month","day"]},
                 {"name":"yqmwd","levels":["year","qtr","month","week_number","day"]}]
+        },
+        {"name":"coin", "label":"Coin details",
+            "levels":[],
+            "hierarchies":[],
+            "attributes":[
+                {"name":"coin_id"},
+                {"name":"symbol"},
+                {"name":"pre_mined"},
+                {"name":"ttl_supply"},
+                {"name":"details_url"},
+                {"name":"image_url"},
+                {"name":"algorithm"},
+                {"name":"proof_type"}
+            ]
         }
         
         ],
