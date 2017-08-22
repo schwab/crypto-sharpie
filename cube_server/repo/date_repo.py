@@ -16,10 +16,17 @@ class DateRepo(object):
         self.db_engine = create_engine(connection)
         self.session = sessionmaker(bind=self.db_engine)
         self.active_session = self.session()
+    def create_instance(self, date):
+        instance = DimDate(year=date.year, month=date.month,\
+                day=date.day, qtr=self.get_qtr(date), week_number= \
+                date.isocalendar()[1], weekday=date.weekday(), \
+                month_name=date.strftime("%B"), date_id=time.mktime(date.timetuple()))  
+        instance.hash_value = self.has instance.__repr__()
     def add_get(self, date):
         """
         Add the provided date to the database if it DNE
         """
+
         query = self.active_session.query(DimDate).filter_by(\
             year=date.year, month=date.month, day=date.day)
         if query.count() > 0:

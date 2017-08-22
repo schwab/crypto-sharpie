@@ -38,7 +38,7 @@ class DimDate(Base):
     """
     __tablename__ = "dim_date"
     __table_args__ = (UniqueConstraint("year", "month", "day","hour", name='_ymd_constraint'),)
-    date_id = Column(Integer, primary_key=True)
+    hash_value = Column(String, primary_key=True)
     year = Column(Integer, index=True)
     month = Column(Integer, index=True)
     day = Column(Integer, index=True)
