@@ -1,3 +1,3 @@
 {
-    "CONNECTION":"mysql+pymysql://root:cryptoquant@mariadb.cryptoquant.org/quant"
+    "CONNECTION":"mysql+pymysql://root:cryptoquant@mariadb_cs.cryptoquant.org/quant"
 }

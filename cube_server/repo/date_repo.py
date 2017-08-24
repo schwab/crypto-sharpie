@@ -1,5 +1,6 @@
 import os
 import time
+import hashlib
 from sqlalchemy import *
 from sqlalchemy.orm import sessionmaker
 from coin_data_models import DimDate
@@ -16,12 +17,16 @@ class DateRepo(object):
         self.db_engine = create_engine(connection)
         self.session = sessionmaker(bind=self.db_engine)
         self.active_session = self.session()
+    def hash(self, to_hash):
+        return hashlib.sha224(to_hash).hexdigest()[:50]
+    
     def create_instance(self, date):
         instance = DimDate(year=date.year, month=date.month,\
                 day=date.day, qtr=self.get_qtr(date), week_number= \
                 date.isocalendar()[1], weekday=date.weekday(), \
                 month_name=date.strftime("%B"), date_id=time.mktime(date.timetuple()))  
-        instance.hash_value = self.has instance.__repr__()
+        instance.hash_value = self.hash(instance.__repr__())
+        return instance
     def add_get(self, date):
         """
         Add the provided date to the database if it DNE

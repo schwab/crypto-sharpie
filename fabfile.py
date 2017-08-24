@@ -44,6 +44,7 @@ def restart(names):
     for service in services:
         commands.append("docker-compose restart %s" % (service))
     run_commands(commands)    
+
 def run_commands(commands, warn_only=False):
     """
     Run one or more commands based on the current env.name (dev is local, otherwise remote)
@@ -79,7 +80,10 @@ def test():
 @task
 def up(detached=False):
     d = "-d" if detached else ""
-    local("docker-compose up %s" % (d))
+    with settings(warn_only=True):
+        local("docker-compose build")
+        local("docker-compose pull")
+        local("docker-compose up %s --remove-orphans" % (d))
 
 
 
