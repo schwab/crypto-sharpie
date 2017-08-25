@@ -78,12 +78,21 @@ def test():
     for f in test_files:
         local("python -m unittest %s" % (f) )
 @task
-def up(detached=False):
+def up(services=None, detached=False):
     d = "-d" if detached else ""
     with settings(warn_only=True):
-        local("docker-compose build")
-        local("docker-compose pull")
-        local("docker-compose up %s --remove-orphans" % (d))
+        if not services is None:
+            srv_list = []
+            if len(services) > 0:
+                srv_list = split_comma(services)
+            for service in srv_list:
+                local("docker-compose build %s" % (service))
+                local("docker-compose pull %s" % (service))
+                local("docker-compose up %s --remove-orphans %s " % (d, service))
+        else:
+            local("docker-compose build")
+            local("docker-compose pull")
+            local("docker-compose up %s --remove-orphans" % (d))
 
 
 

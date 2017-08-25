@@ -21,6 +21,8 @@ from exchange_repo import ExchangeRepo
 from sqlalchemy import *
 from sqlalchemy import create_engine
 from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy import exc
+
 
 class CoinDataImporter(object):
     '''
@@ -37,8 +39,17 @@ class CoinDataImporter(object):
         self.dt_repo = DateRepo(connection=self.connection)
         # Create tables
         print ("Creating table if they do not exist on database %s" % (self.connection), file=sys.stderr)
-       
-        ENGINE = models.create_engine(self.connection)
+        connection_made = False
+        while not connection_made:
+            try:
+                ENGINE = models.create_engine(self.connection)
+                connection_made = True
+                
+            except exc.SQLAlchemyError, e:
+                print ("Caught SQLAlchemyError %s " % (str(e)))
+                print ("Waiting for database server to start...", file=sys.stderr)
+                time.sleep(5)
+        
         models.Base.metadata.drop_all(ENGINE)
         models.Base.metadata.create_all(ENGINE)
     def import_exchanges(self):

@@ -38,7 +38,7 @@ class DimDate(Base):
     """
     __tablename__ = "dim_date"
     __table_args__ = (UniqueConstraint("year", "month", "day","hour", name='_ymd_constraint'),)
-    hash_value = Column(String, primary_key=True)
+    hash_value = Column(String(50), primary_key=True)
     year = Column(Integer, index=True)
     month = Column(Integer, index=True)
     day = Column(Integer, index=True)
@@ -47,6 +47,7 @@ class DimDate(Base):
     month_name = Column(String(200), index=True)
     weekday = Column(Integer, index=True)
     week_number = Column(Integer, index=True)
+    timestamp = Column(Integer)
 
 class DimCoin(Base):
     """
@@ -82,7 +83,7 @@ class FactCoinExchangePrice(Base):
     id = Column(Integer, primary_key=True, autoincrement=True)
     coin_id = Column(Integer, index=True)
     exchange_id = Column(Integer, index=True)
-    date_id = Column(Integer, index=True)
+    date_hash_value = Column(String(50), index=True)
     price_max = Column(Numeric)
     price_min = Column(Numeric)
     price_open = Column(Numeric)
