@@ -20,7 +20,7 @@ class DimExchange(Base):
     Exchanges in this set of data.
     """
     __tablename__ = "dim_exchange"
-    exchange_id = Column(Integer, primary_key=True, autoincrement=True)
+    hash_value = Column(String(50), primary_key=True)
     exchange_nm = Column(String(200), unique=True)
     exchange_url = Column(String(800), unique=False)
     exchange_api_url = Column(String(800), unique=False)
@@ -29,8 +29,8 @@ class DimExchange(Base):
     downloader = Column(String(800))
 
     def __repr__(self):
-        return "<DimExchange(name='%s', id='%s', downloader=%s)>" % ( \
-                                self.exchange_nm, self.exchange_id, self.downloader)
+        return "<DimExchange(name='%s', hash='%s', downloader=%s)>" % ( \
+                                self.exchange_nm, self.hash_value, self.downloader)
 
 class DimDate(Base):
     """
@@ -54,7 +54,7 @@ class DimCoin(Base):
     Crypto Coin
     """
     __tablename__ = "dim_coin"
-    coin_id = Column(Integer, primary_key=True, autoincrement=True)
+    hash_value = Column(String(50), primary_key=True)
     name = Column(String(200), unique=True)
     symbol = Column(String(20), unique=True)
     pre_mined = Column(Integer, index=False)
@@ -65,12 +65,12 @@ class DimCoin(Base):
     proof_type = Column(String(20))
     
     def __repr__(self):
-        return "<DimCryptoCoin(name='%s', id='%s')>" % ( \
-                                self.coin_nm, self.coin_id)
+        return "<DimCryptoCoin(symbol='%s', exchange='%s')>" % ( \
+                                self.symbol, self.exchange_hash)
 
 coin_exchange_association_table = Table("coin_exchange", Base.metadata, \
-    Column('coin_id', Integer, ForeignKey('dim_coin.coin_id')), \
-    Column('exchange_id', Integer, ForeignKey('dim_exchange.exchange_id')) \
+    Column('coin_hash', String(50), ForeignKey('dim_coin.hash_value')), \
+    Column('exchange_hash', String(50), ForeignKey('dim_exchange.hash_value')) \
     )
 
 
@@ -107,6 +107,7 @@ def drop_recreate_db(connection):
     Base.metadata.drop_all(engine)
     print "Recreate schema ..."
     Base.metadata.create_all(engine)
+
 ENGINE = None
 def connect(connection):
     ENGINE = create_engine(connection)

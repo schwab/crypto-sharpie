@@ -75,7 +75,9 @@ class CoinDataImporter(object):
             date_ptr = date_ptr + timedelta(1)
         print ("Dates from %s to %s added or verified." % (date_start, date_ptr), file=sys.stderr)
         return date_list_all
-
+    
+    def import_coins(self):
+        
     def generate_days_in_range(self, dt_start, dt_end):
         if not isinstance(dt_start, datetime) or not isinstance(dt_end, datetime):
             raise Exception("dt_start and dt_end must be datettime.")
